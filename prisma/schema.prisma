@@ -28,17 +28,21 @@ model Admin {
   lastname String
   companyname String
   email String @unique
-  address Address?
   contact Int 
   password String 
   industrytype String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
 }
-type Address{
-  street String
-  city   String
-  state  String
+
+
+model About{
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  about String?
+  DOB String?
+  address String?
+ 
 
 }
 
