@@ -22,4 +22,24 @@ model Employee {
   contact     String?   
   createdAt   DateTime @default(now())
 }
+model Admin {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  firstname String
+  lastname String
+  companyname String
+  email String @unique
+  address Address?
+  contact Int 
+  password String 
+  industrytype String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+type Address{
+  street String
+  city   String
+  state  String
+
+}
+
 
