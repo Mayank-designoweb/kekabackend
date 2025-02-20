@@ -23,27 +23,28 @@ model Employee {
   createdAt   DateTime @default(now())
 }
 model Admin {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  firstname String
-  lastname String
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  firstname   String
+  lastname    String
   companyname String
-  email String @unique
-  contact Int 
-  password String 
+  email       String    @unique
+  contact     String    // Changed from Int to String for phone numbers
+  password    String
   industrytype String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
+  about       About[]   // One-to-many relation with About
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model About {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  about    String?
+  DOB      String?
+  address  String?
+  adminId  String  @db.ObjectId   // Foreign key to Admin
+  admin    Admin   @relation(fields: [adminId], references: [id])
 }
 
 
-model About{
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  about String?
-  DOB String?
-  address String?
- 
-
-}
 
 

@@ -1,7 +1,7 @@
 const express = require("express");
 const status = require("../utils/constants");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 const createAdminServices = require("../services/adminService");
 const { PrismaClient } = require("@prisma/client");
 const regex = require("../utils/utils");
@@ -10,9 +10,10 @@ const prisma = new PrismaClient();
 
 const adminSignup = async (req, res) => {
   try {
-    const { email, password, firstname, lastname, contact, companyname } = req.body;
+    const { email, password, firstname, lastname, contact, companyname } =
+      req.body;
 
-    if (!email || !password  ) {
+    if (!email || !password) {
       return res.status(400).json({
         error: "Missing required feilds",
       });
@@ -58,7 +59,8 @@ const adminSignup = async (req, res) => {
       password: hashedPassword,
       firstname,
       lastname,
-      companyname
+      companyname,
+      contact,
     };
     const createdAdmin = await createAdminServices(data);
     res.status(status.ok).json(createdAdmin);
@@ -84,11 +86,11 @@ const adminLogin = async (req, res) => {
       });
     }
     if (adminExist) {
-      const token = jwt.sign({ email }, JWT_secret);
+      // const token = jwt.sign({ email }, JWT_secret);
 
       res.status(200).json({
         mgd: "login successful",
-        token,
+        // token,
       });
     }
   } catch (error) {
@@ -97,7 +99,20 @@ const adminLogin = async (req, res) => {
   }
 };
 
+const getAllEmp = async (req, res) => {
+  try {
+    const emp = await prisma.employee.findMany();
+    if (!emp || emp === 0) {
+      return res.status(status.not_found).json({ message: "no users found" });
+    }
+    res.status(status.ok).json(emp);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   adminSignup,
   adminLogin,
+  getAllEmp,
 };

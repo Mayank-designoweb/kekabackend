@@ -1,20 +1,30 @@
 const jwt = require("jsonwebtoken");
+const { JWT_secret } = require("../utils/jwt");
 require("dotenv").config();
 
 const authMiddleware = (req, res, next) => {
-    const token = req.header("Authorization");
-
+  try {
+    const token = req.headers.authorization;
     if (!token) {
-        return res.status(401).json({ error: "Access denied. No token provided." });
+      return res
+        .status(401)
+        .json({ error: "Access denied. No token provided." });
     }
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;         // Attaching user info to request
-        next();                    // Proceeding to the next middleware or route
-    } catch (error) {
-        res.status(400).json({ error: "Invalid token." });
+    const decoded = jwt.verify(token, JWT_secret);
+    console.log(decoded);
+    
+    if (decoded.email) {
+      next();
+    } else {
+      res.status(403).json({
+        msg: "you are not authenticated",
+      });
     }
+  } catch (error) {
+    res.status(400).json({ error: "Invalid token." });
+  }
+  
 };
 
 module.exports = authMiddleware;
