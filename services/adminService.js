@@ -4,6 +4,7 @@ const status = require("../utils/constants");
 const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 const { JWT_secret } = require("../utils/jwt");
+const sendMail = require("../controllers/mailCont");
 
 const createAdminServices = async (data) => {
   try {
@@ -13,25 +14,40 @@ const createAdminServices = async (data) => {
     });
     if (newAdmin) {
       const token = jwt.sign({ email }, JWT_secret);
-
+      const mail = await sendMail(email);
       return {
-        messages: "Admin created successfully",
-        status: 1,
+        status: "1",
+        message: "Admin created successfully",
+        data,
         token,
+        mail,
       };
     }
   } catch (error) {
     console.log(error);
-    res.status(status.Bad_request).json({status: "-1"});
-    
+    res.status(status.Bad_request).json({ msg: "somethig is wrong" });
   }
 };
 
-const loginAdmin = async () => {
+const createAssetServices = async (assetData) => {
   try {
+    const newAsset = await prisma.assets.create({
+      data: assetData
+    })
+    if (newAsset) {
+      return {
+        status: "1",
+        message: "Asset created successfully",
+        assetData,
+      };
+    }
   } catch (error) {
     console.log(error);
+    return {
+      status: "-1",
+      message: "something went wrong"
+    }
   }
 };
 
-module.exports = createAdminServices;
+module.exports = {createAdminServices, createAssetServices};

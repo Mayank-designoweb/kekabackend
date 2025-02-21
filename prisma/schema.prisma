@@ -19,7 +19,9 @@ model Employee {
   lastName    String
   email       String   @unique
   password    String
-  contact     String?   
+  contact     String?
+  assets Assets[]   
+  abouts EmployeeAbout[]
   createdAt   DateTime @default(now())
 }
 model Admin {
@@ -28,10 +30,10 @@ model Admin {
   lastname    String
   companyname String
   email       String    @unique
-  contact     String    // Changed from Int to String for phone numbers
+  contact     String    
   password    String
   industrytype String?
-  about       About[]   // One-to-many relation with About
+  abouts     AdminAbout[] 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -40,10 +42,46 @@ model About {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
   about    String?
   DOB      String?
-  address  String?
-  adminId  String  @db.ObjectId   // Foreign key to Admin
-  admin    Admin   @relation(fields: [adminId], references: [id])
+  address  String?  
+  employees    EmployeeAbout[] 
+  admins AdminAbout[] 
 }
+
+model EmployeeAbout {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  employeeId String   @db.ObjectId
+  aboutId    String   @db.ObjectId
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  about      About    @relation(fields: [aboutId], references: [id])
+}
+
+model AdminAbout {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  adminId  String   @db.ObjectId
+  aboutId  String   @db.ObjectId
+  admin    Admin    @relation(fields: [adminId], references: [id])
+  about    About    @relation(fields: [aboutId], references: [id])
+}
+
+model Assets{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  assetId Int @unique
+  name String
+  price String
+  imageurl String?
+  condition String
+  employee  Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String? @db.ObjectId 
+  category Assetcategory
+
+}
+enum Assetcategory {
+  LAPTOP
+  MOBILE
+  ACCESSORIES
+}
+
+
 
 
 
