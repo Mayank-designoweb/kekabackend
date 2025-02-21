@@ -24,5 +24,15 @@ const about = async (req, res) => {
     res.status(status.Bad_request).json({ msg: "something went wrong" });
   }
 };
+const adminProfile = async (req, res) => {
+  try {
+    res.send("admin access granted")
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-module.exports = about;
+module.exports = {
+    about,
+    adminProfile
+};
